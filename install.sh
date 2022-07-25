@@ -1,9 +1,9 @@
-shc -f ./src/msm.sh
+shc -f ./msm.sh
 
-if [ -f ./src/msm.sh.x ]; then
+if [ -f ./msm.sh.x ]; then
     mkdir bin/
-    mv ./src/msm.sh.x ./bin/msm
-    rm ./src/msm.sh.x.c
+    mv ./msm.sh.x ./bin/msm
+    rm ./msm.sh.x.c
 
     echo "Compiled to /bin/msm/"
 
