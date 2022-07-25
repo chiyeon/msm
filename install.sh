@@ -1,6 +1,7 @@
 shc -f ./src/msm.sh
 
 if [ -f ./src/msm.sh.x ]; then
+    mkdir bin/
     mv ./src/msm.sh.x ./bin/msm
     rm ./src/msm.sh.x.c
 
