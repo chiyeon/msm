@@ -2,43 +2,133 @@
 
 # --- GLOBAL VARS ---
 # name of room, appended to MSMDIR
-ROOM=${1:-"chat"}
-# root directory of all chat rooms
-MSMDIR="/mnt/batman/rooms/"
+ROOM="chat"
+VERSION="1.0"
 
-# sends close message & kills program. called from SIGINT
+# --- GLOBAL FUNCS ---
+# prints usage
+usage () {
+	cat << EOF >&2
+Usage: msm [-r <room>] [-d <new dir>] [-v] [-h] [-c] 
+
+Arguments:
+-r <room>: Optional. Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
+
+Functions:
+ -d <dir>: Changes the MSM directory to <dir>. Can also be edited in the config file.
+       -h: Prints this help text.
+       -v: Prints the current MSM version.
+       -c: Resets the MSM config file ($HOME/.config/msm/msm.config).
+
+EOF
+	exit 1
+}
+
+# Sends close message & kills program. Triggered by SIGINT.
 close_chat () {
 	send_msg "$USER left room $ROOM"
 	trap - SIGINT SIGTERM
 	kill -- -$$
 }
 
-# sends formatted message to current room
+# Sends message formatted with the date to the current room.
 send_msg () {
 	echo -e "\r[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
 }
 
-# check if room directory exists. create if not
-if [ ! -d $MSMDIR$ROOM ]
-then
-	# create file
-	sudo touch $MSMDIR$ROOM
-	# give write perms
-	sudo chmod a+rw $MSMDIR$ROOM
-fi
+# Opens chat & starts sending/recieving.
+start_chat () {
+	load_config
 
-# open reading stream
-tail -f $MSMDIR$ROOM &
+	# check if room directory exists. create if not
+	if [ ! -d $MSMDIR$ROOM ]
+	then
+		# create file
+		touch $MSMDIR$ROOM
+		# give write perms
+		chmod a+rw $MSMDIR$ROOM
+	fi
 
-# notify room of presence
-send_msg "$USER entered room $ROOM"
+	# open reading stream
+	tail -f $MSMDIR$ROOM &
 
-# listen for SIGINT to close
-trap close_chat SIGINT SIGTERM
+	# notify room of presence
+	send_msg "$USER entered room $ROOM"
 
-# listen for and send chat messages
-while :
-do
-	read line
-	send_msg "$USER: $line"
+	# listen for SIGINT to close
+	trap close_chat SIGINT SIGTERM
+
+	# listen for and send chat messages
+	while :
+	do
+		read line
+		send_msg "$USER: $line"
+	done
+}
+
+# Creates the default configuration file & directories.
+create_default_config () {
+	mkdir $HOME/.config/msm
+	mkdir $HOME/chats
+	echo "MSMDIR=$HOME/chats/" > $HOME/.config/msm/msm.config
+	echo "MSM Config file created at $HOME/.config/msm/msm.config"
+}
+
+# Attempts to load the config file, creating it with defaults if it doesn't exist.
+# Also validates config file contents & directories.
+load_config () {
+	# on startup check if our config file exists.
+	if [ ! -f $HOME/.config/msm/msm.config ]; then
+		# create file with default params
+		echo "MSM First Time Startup. Generating config file..."
+		create_default_config
+	else
+		# if exists, validate then load config
+		. $HOME/.config/msm/msm.config
+
+		# ensure last character of directory is '/'
+		if [ "${MSMDIR: -1}" != "/" ]; then
+			echo "Config Error: MSMDIR should end with a '/'!"
+			exit 2
+		fi
+		# --- other validations would be here ---
+	fi
+
+	# also check if main directory exists
+	if [ ! -d $MSMDIR ]; then
+		echo "MSMDIR doesn't exist! Check msm.config or replace it with setdir."
+		exit 2
+	fi
+}
+
+# On startup, check for arguments.
+while getopts r:d:vhc o; do
+	case $o in
+		(r)		# Set room & continue to open chat
+			ROOM=$OPTARG
+			;;
+		(d)		# Change MSM directory & close
+			sed -i -e "s~.*MSMDIR.*~MSMDIR=$OPTARG~" $HOME/.config/msm/msm.config
+			echo "Changed MSMDIR in msm.config to $OPTARG."
+			load_config
+			exit 0
+			;;
+		(v)		# Print version & close
+			echo "MSM $VERSION"
+			exit 0
+			;;
+		(h)		# Print usage & close
+			usage
+			;;
+		(c)		# Reset config & close
+			create_default_config
+			exit 0
+			;;
+		(*)		# Print usage & close
+			usage
+			;;
+	esac
 done
+
+# If continued to this point, start chat in current room & MSM directory
+start_chat
