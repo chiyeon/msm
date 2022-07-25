@@ -26,7 +26,7 @@ msm has numerous optional flags.
 - `-r <room>`: Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
   
   Ex: `msm -r newroom`
-- `-d <dir>`: Changes the MSM directory to <dir>. Can also be edited in the config file.
+- `-d <dir>`: Changes the MSM directory to `<dir>`. Can also be edited in the config file.
 
   Ex: `msm -d ~/work-chats/`
 - `-h`: Prints the help menu
