@@ -21,7 +21,9 @@ send_msg () {
 # check if room directory exists. create if not
 if [ ! -d $MSMDIR$ROOM ]
 then
+	# create file
 	sudo touch $MSMDIR$ROOM
+	# give write perms
 	sudo chmod a+rw $MSMDIR$ROOM
 fi
 
