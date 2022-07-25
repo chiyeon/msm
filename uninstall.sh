@@ -1,1 +1,1 @@
-sudo rm /usr/local/bin/msm && "MSM succesfuly removed."
+sudo rm /usr/local/bin/msm && echo "msm succesfuly removed."
