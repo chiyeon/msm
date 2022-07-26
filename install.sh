@@ -1,3 +1,13 @@
+echo "Checking for previous versions"
+
+if [ -f /usr/local/bin/msm ]; then
+	echo "Found previous msm installation"
+	./uninstall.sh || {
+		echo "Couldn't uninstall. Run ./uninstall.sh before continuing"
+		exit 0
+	}
+fi
+
 shc -f ./msm.sh
 
 if [ -f ./msm.sh.x ]; then

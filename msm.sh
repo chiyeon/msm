@@ -9,12 +9,12 @@ VERSION="1.0"
 # prints usage
 usage () {
 	cat << EOF >&2
-Usage: msm [-r <room>] [-d <new dir>] [-v] [-h] [-c] 
+Usage: msm [-r <room>] [-w <room>] [-d <new dir>] [-v] [-h] [-c] 
 
-Arguments:
--r <room>: Optional. Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
+The following flags are ALL OPTIONAL.
 
-Functions:
+-r <room>: Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
+-w <room>: Specify a room to wipe. Deletes room and all chat history.
  -d <dir>: Changes the MSM directory to <dir>. Can also be edited in the config file.
        -h: Prints this help text.
        -v: Prints the current MSM version.
@@ -102,10 +102,16 @@ load_config () {
 }
 
 # On startup, check for arguments.
-while getopts r:d:vhc o; do
+while getopts r:w:d:vhc o; do
 	case $o in
 		(r)		# Set room & continue to open chat
 			ROOM=$OPTARG
+			;;
+		(w)		# Delete a room
+			load_config
+			rm $MSMDIR$OPTARG
+			echo "Removed room $OPTARG"
+			exit 0
 			;;
 		(d)		# Change MSM directory & close
 			sed -i -e "s~.*MSMDIR.*~MSMDIR=$OPTARG~" $HOME/.config/msm/msm.config
