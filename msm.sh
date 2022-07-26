@@ -46,7 +46,7 @@ start_chat () {
 		# create file
 		touch $MSMDIR$ROOM
 		# give write perms
-		chmod a+rw $MSMDIR$ROOM
+		#chmod a+rw $MSMDIR$ROOM
 	fi
 
 	# open reading stream
