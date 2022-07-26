@@ -2,6 +2,8 @@
 
 An experimental chat using SSH
 
+msm aims to provide a simple way to chat with other users conneced to the same SSH machine.
+
 ## How to Run
 
 ```console
@@ -36,7 +38,7 @@ msm has numerous optional flags.
   Ex: `msm -d ~/work-chats/`
 - `-h`: Prints the help menu
 - `-v` Prints the current version
-- `c` Resets the config file to defaults.
+- `-c` Resets the config file to defaults.
 
 ### MSMDIR
 The `MSMDIR` or msm directory is the base directory for all chats. By default is is located at `$HOME/chats/`. Any rooms will be created and edited here, so the location must be accessible for read and write by anyone who wishes to chat. It is **highly recommended** to not use a user home directory, as all users chatting require read and write permissions for files inside the directory.
