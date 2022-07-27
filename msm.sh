@@ -148,7 +148,7 @@ if [ -p /dev/stdin ]; then
 	setup	
 
 	while IFS= read -r line; do
-		send_msg "$line"
+		send_msg "$USER: $line"
 	done
 else
 	# If continued to this point, start chat in current room & MSM directory
