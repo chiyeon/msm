@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # --- GLOBAL VARS ---
 # name of room, appended to MSMDIR
@@ -38,8 +38,8 @@ send_msg () {
 	echo "[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
 }
 
-# Opens chat & starts sending/recieving.
-start_chat () {
+# Load config and create room if needed.
+setup () {
 	load_config
 
 	# check if room directory exists. create if not
@@ -50,6 +50,12 @@ start_chat () {
 		# give write perms
 		#chmod a+rw $MSMDIR$ROOM
 	fi
+}
+
+# Opens chat & starts sending/recieving.
+start_chat () {
+	# Run setup function
+	setup
 
 	# clear screen
 	clear
@@ -149,5 +155,15 @@ while getopts r:w:l:d:vhc o; do
 	esac
 done
 
-# If continued to this point, start chat in current room & MSM directory
-start_chat
+# If pipe exists on stdin, write data to chat file.
+if [ -p /dev/stdin ]; then
+	# Run setup function
+	setup	
+
+	while IFS= read -r line; do
+		send_msg "$USER: $line"
+	done
+else
+	# If continued to this point, start chat in current room & MSM directory
+	start_chat
+fi
