@@ -36,8 +36,8 @@ send_msg () {
 	echo -e "\r[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
 }
 
-# Opens chat & starts sending/recieving.
-start_chat () {
+# Load config and create room if needed.
+setup () {
 	load_config
 
 	# check if room directory exists. create if not
@@ -48,6 +48,12 @@ start_chat () {
 		# give write perms
 		#chmod a+rw $MSMDIR$ROOM
 	fi
+}
+
+# Opens chat & starts sending/recieving.
+start_chat () {
+	# Run setup function
+	setup
 
 	# open reading stream
 	tail -f $MSMDIR$ROOM &
@@ -138,6 +144,9 @@ done
 
 # If pipe exists on stdin, write data to chat file.
 if [ -p /dev/stdin ]; then
+	# Run setup function
+	setup	
+
 	while IFS= read -r line; do
 		send_msg "$line"
 	done
