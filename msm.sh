@@ -33,7 +33,7 @@ close_chat () {
 
 # Sends message formatted with the date to the current room.
 send_msg () {
-	echo -e "\r[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
+	echo "[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
 }
 
 # Opens chat & starts sending/recieving.
@@ -49,8 +49,12 @@ start_chat () {
 		#chmod a+rw $MSMDIR$ROOM
 	fi
 
+	# clear screen
+	clear
+
 	# open reading stream
 	tail -f $MSMDIR$ROOM &
+	tail_pid=$!
 
 	# notify room of presence
 	send_msg "$USER entered room $ROOM"
@@ -61,8 +65,12 @@ start_chat () {
 	# listen for and send chat messages
 	while :
 	do
-		read line
-		send_msg "$USER: $line"
+		read line					# read message
+		kill $tail_pid				# stop stream of messages
+		clear						# clear screen (get rid of user input)
+		send_msg "$USER: $line"		# append input to file
+		tail -f $MSMDIR$ROOM &		# re open stream
+		tail_pid=$!
 	done
 }
 
