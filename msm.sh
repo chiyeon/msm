@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # --- GLOBAL VARS ---
 # name of room, appended to MSMDIR
@@ -136,5 +136,12 @@ while getopts r:w:d:vhc o; do
 	esac
 done
 
-# If continued to this point, start chat in current room & MSM directory
-start_chat
+# If pipe exists on stdin, write data to chat file.
+if [ -p /dev/stdin ]; then
+	while IFS= read -r line; do
+		send_msg "$line"
+	done
+else
+	# If continued to this point, start chat in current room & MSM directory
+	start_chat
+fi
