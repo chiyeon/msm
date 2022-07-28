@@ -43,10 +43,12 @@ msm has numerous optional flags.
 
 - `-d <dir>`: Changes the msm directory to `<dir>`. Can also be edited in the config file.
 
-  Ex: `msm -d ~/work-chats/`
+  Ex: `msm -d /mnt/batman/rooms/`
 
-- `-l <lines>`: Changes the number of lines to display to `<lines>`. Can also be edited in the config file.
+- `-l <lines>`: Changes the number of lines to display to `<lines>`. The default is 50 lines. Can also be edited in the config file.
 
+  Ex: `msm -l 10`
+  
 - `-h`: Prints the help menu
 - `-v` Prints the current version
 - `-c` Resets the config file to defaults.
