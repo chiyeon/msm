@@ -21,6 +21,7 @@ Then, type to chat.
 Run the `install.sh` script. Using `shc`, the script will compile the msm binary and place it in `bin/`. Sudo privileges are required to further copy it to `/usr/local/bin/`, where msm can be called from anywhere.
 
 ### Prerequisites
+Prerequisites are **only required for installation!** If running as a bash script, nothing else is needed!
 
 - shc
 
@@ -44,6 +45,8 @@ msm has numerous optional flags.
 
   Ex: `msm -d ~/work-chats/`
 
+- `-l <lines>`: Changes the number of lines to display to `<lines>`. Can also be edited in the config file.
+
 - `-h`: Prints the help menu
 - `-v` Prints the current version
 - `-c` Resets the config file to defaults.
@@ -58,4 +61,4 @@ Rooms are empty files created in the msm directory. The default room is `chat`. 
 
 ### Config File
 
-msm's config file can be found at `$HOME/.config/msm/msm.config`.
+msm's config file can be found at `$HOME/.config/msm/msm.config`. If anything in the config breaks or flags like `-d` and `-l` do not work, it is recommended to reset the file to its default values with `msm -c`.
