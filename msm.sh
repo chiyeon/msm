@@ -4,7 +4,7 @@
 # name of room, appended to MSMDIR
 ROOM="chat"
 VERSION="1.0"
-NUM_LINES=20
+NUM_LINES=50
 
 # --- GLOBAL FUNCS ---
 # prints usage
@@ -16,7 +16,7 @@ The following flags are ALL OPTIONAL.
 
  -r <room>: Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
  -w <room>: Specify a room to wipe. Deletes room and all chat history.
--l <lines>: Specify the number of lines to always output in chat
+-l <lines>: Changes the number of lines to output in chat. Can also be edited in the config file.
   -d <dir>: Changes the MSM directory to <dir>. Can also be edited in the config file.
         -h: Prints this help text.
         -v: Prints the current MSM version.
@@ -47,8 +47,6 @@ setup () {
 	then
 		# create file
 		touch $MSMDIR$ROOM
-		# give write perms
-		#chmod a+rw $MSMDIR$ROOM
 	fi
 }
 
@@ -61,7 +59,8 @@ start_chat () {
 	clear
 
 	# open reading stream
-	tail -n $NUM_LINES -f $MSMDIR$ROOM &
+	# subtract 1 because user joining will add 1 line
+	tail -n $(($NUM_LINES-1)) -f $MSMDIR$ROOM &
 	tail_pid=$!
 
 	# notify room of presence
@@ -87,6 +86,7 @@ create_default_config () {
 	mkdir $HOME/.config/msm
 	mkdir $HOME/chats
 	echo "MSMDIR=$HOME/chats/" > $HOME/.config/msm/msm.config
+	echo "NUM_LINES=50" >> $HOME/.config/msm/msm.config
 	echo "MSM Config file created at $HOME/.config/msm/msm.config"
 }
 
@@ -130,7 +130,10 @@ while getopts r:w:l:d:vhc o; do
 			exit 0
 			;;
 		(l)		# Lines to display
-			NUM_LINES=$OPTARG
+			sed -i -e "s~.*NUM_LINES.*~NUM_LINES=$OPTARG~" $HOME/.config/msm/msm.config
+			echo "Changed NUM_LINES in msm.config to $OPTARG."
+			load_config
+			exit 0
 			;;
 		(d)		# Change MSM directory & close
 			sed -i -e "s~.*MSMDIR.*~MSMDIR=$OPTARG~" $HOME/.config/msm/msm.config
