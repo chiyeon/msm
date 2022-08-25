@@ -2,7 +2,7 @@
 
 An experimental chat using SSH
 
-msm aims to provide a simple way to chat with other users conneced to the same SSH machine.
+msm aims to provide a simple way to chat with other users connected to the same SSH machine.
 
 ## How to Run
 
