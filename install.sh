@@ -9,22 +9,16 @@ if [ -f /usr/local/bin/msm ]; then
     }
 fi
 
-shc -f ./msm.sh
+cp msm.sh msm
 
 # Copy the binary to /usr/local/bin
-if [ -f ./msm.sh.x ]; then
-    mkdir bin/
-    mv ./msm.sh.x ./bin/msm
-    rm ./msm.sh.x.c
-
-    echo "Compiled to /bin/msm/"
-
+if [ -f ./msm ]; then
     { # try
-        sudo cp ./bin/msm /usr/local/bin/ &&
+        sudo mv ./msm /usr/local/bin/ &&
             echo "Done. Try running 'msm' in the console!"
     } || { #catch
         echo "Couldn't copy msm to /usr/local/bin/"
     }
 else
-    echo Failed to compile.
+    echo "Failed to compile."
 fi
