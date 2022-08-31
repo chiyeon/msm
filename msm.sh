@@ -28,14 +28,19 @@ EOF
 
 # Sends close message & kills program. Triggered by SIGINT.
 close_chat () {
-	send_msg "$USER left room $ROOM"
+  send_msg_raw "[$(date +'%b %d, %Y %H:%M')] $USER left room $ROOM"
 	trap - SIGINT SIGTERM
 	kill -- -$$
 }
 
 # Sends message formatted with the date to the current room.
 send_msg () {
-	echo "[$(date +'%H:%M')] $1" >> $MSMDIR$ROOM
+	echo -e "[$(date +'%H:%M')] $@" >> $MSMDIR$ROOM
+}
+
+# sends message without formatting
+send_msg_raw () {
+  echo -e $@ >> $MSMDIR$ROOM
 }
 
 # Load config and create room if needed.
@@ -64,7 +69,7 @@ start_chat () {
 	tail_pid=$!
 
 	# notify room of presence
-	send_msg "$USER entered room $ROOM"
+  send_msg_raw "[$(date +'%b %d, %Y %H:%M')] $USER entered room $ROOM"
 
 	# listen for SIGINT to close
 	trap close_chat SIGINT SIGTERM
