@@ -12,6 +12,8 @@ usage () {
 	cat << EOF >&2
 Usage: msm [-r <room>] [-w <room>] [-l <lines>] [-d <new dir>] [-v] [-h] [-c] 
 
+Note: All users who wish to chat in a particular room MUST have read/write priviledges to that file. It is recommended to have all users be able to read/write a safe MSM directory.
+
 The following flags are ALL OPTIONAL.
 
  -r <room>: Specify a room to enter. Creates room in MSM directory if it doesn't exist. Default is 'chat'.
